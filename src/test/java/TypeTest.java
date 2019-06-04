@@ -1,5 +1,7 @@
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 public class TypeTest {
     @Test
     public void simpleTest() {
@@ -19,4 +21,20 @@ public class TypeTest {
         assert(Type.Array(Type.Array(Type.Bool)).equals(Type.Array(Type.Array(Type.Bool))));
         assert(!Type.Array(Type.Array(Type.Bool)).equals(Type.Array((Type.Bool))));
     }
+
+    @Test
+    void function() {
+        var type1 = Type.Function(Arrays.asList(Type.Int), Type.Int);
+        var type2 = Type.Function(Arrays.asList(Type.Int), Type.Int);
+        assert type1.equals(type2);
+
+
+        type1 = Type.Function(Arrays.asList(Type.Int, Type.Int), Type.Int);
+        assert !type1.equals(type2);
+
+
+        type2 = Type.Function(Arrays.asList(), Type.Int);
+        assert !type1.equals(type2);
+    }
+
 }

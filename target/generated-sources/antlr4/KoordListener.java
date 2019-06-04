@@ -1,4 +1,4 @@
-// Generated from Koord.g4 by ANTLR 4.7.1
+// Generated from /Users/johnwang/Desktop/koord/src/main/antlr4/Koord.g4 by ANTLR 4.7.2
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -176,6 +176,16 @@ public interface KoordListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitRelop(KoordParser.RelopContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KoordParser#type}.
+	 * @param ctx the parse tree
+	 */
+	void enterType(KoordParser.TypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KoordParser#type}.
+	 * @param ctx the parse tree
+	 */
+	void exitType(KoordParser.TypeContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link KoordParser#decblock}.
 	 * @param ctx the parse tree

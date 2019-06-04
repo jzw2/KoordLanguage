@@ -1,3 +1,5 @@
+import java.util.List;
+
 /**
  * Type system for Koord
  */
@@ -10,6 +12,7 @@ class Type {
     private static final int PosVal = 4;
     private static final int ArrayVal = 5;
     private static final int StringVal = 6;
+    private static final int FunctionVal = 7;
 
     public static final Type Int = new Type(IntVal);
     public static final Type Float = new Type(FloatVal);
@@ -28,6 +31,8 @@ class Type {
     }
 
     private Type innerType = null;
+    private Type returnType = null;
+    private List<Type> argumentType = null;
     private final int code;
 
     /**
@@ -42,6 +47,14 @@ class Type {
 
     }
 
+    public static Type Function(List<Type> params, Type ret) {
+        var t = new Type(FunctionVal);
+        t.returnType = ret;
+        t.argumentType = params;
+        return t;
+    }
+
+
     private Type(int code) {
         this.code = code;
     }
@@ -55,12 +68,21 @@ class Type {
      */
     @Override
     public boolean equals(Object other) {
-        Type otherType = (Type) other;
-        if (innerType == null) {
-            return this.code == ((Type) otherType).code;
+        if (other == null) {
+            return false;
+        }
+        if (innerType != null) {
+            return this.code == ((Type) other).code && this.innerType.equals(((Type) other).innerType);
         }
 
-        return this.code == ((Type) other).code && this.innerType.equals(((Type) other).innerType);
+        if (this.code == FunctionVal) {
+            return this.returnType.equals(((Type) other).returnType)
+                    && this.argumentType.equals(((Type) other).argumentType);
+        }
+
+        return this.code == ((Type) other).code;
+
+
     }
 
     /**
@@ -70,6 +92,8 @@ class Type {
     public boolean isArray() {
         return this.code == ArrayVal;
     }
+
+    public boolean isFunction() { return this.code == FunctionVal; }
 
 
     /**

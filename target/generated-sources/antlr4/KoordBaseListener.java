@@ -1,4 +1,4 @@
-// Generated from Koord.g4 by ANTLR 4.7.1
+// Generated from /Users/johnwang/Desktop/koord/src/main/antlr4/Koord.g4 by ANTLR 4.7.2
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -214,6 +214,18 @@ public class KoordBaseListener implements KoordListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitRelop(KoordParser.RelopContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterType(KoordParser.TypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitType(KoordParser.TypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
