@@ -70,26 +70,67 @@ public class SymbolTable {
 
         walker.walk(new KoordBaseListener() {
 
+            private Type typeFromTypeContext(KoordParser.TypeContext ctx) {
+
+                Type t = null;
+                if (ctx.FLOAT() != null) {
+                    t = Type.Float;
+                } else if (ctx.INT() != null) {
+                    t = Type.Int;
+                } else if (ctx.BOOL() != null) {
+                    t = Type.Bool;
+                } else if (ctx.POS() != null) {
+                    t = Type.Pos;
+                }else if (ctx.STRINGTYPE() != null) {
+                    t = Type.String;
+
+                } else {
+                    System.err.println("Unable to determine type");
+                }
+                return t;
+            }
             private Scope currentScope;
             private String moduleName;
-                    @Override
-                    public void enterModule(KoordParser.ModuleContext ctx) {
-                        moduleName = ctx.MODULENAME().getText();
-                    }
+            @Override
+            public void enterModule(KoordParser.ModuleContext ctx) {
+                                                                 moduleName = ctx.MODULENAME().getText();
+                                                                                                         }
 
-                    @Override
-                    public void exitModule(KoordParser.ModuleContext ctx) {
-                        moduleName = null;
-                    }
+            @Override
+            public void exitModule(KoordParser.ModuleContext ctx) {
+                                                                moduleName = null;
+                                                                                  }
 
-                    @Override
-                    public void enterActuatordecls(KoordParser.ActuatordeclsContext ctx) {
-                        currentScope = Scope.Actuator;
-                    }
+            @Override
+            public void enterActuatordecls(KoordParser.ActuatordeclsContext ctx) {
+                currentScope = Scope.Actuator;
+            }
 
-                    @Override
-                    public void enterSensordecls(KoordParser.SensordeclsContext ctx) {
-                        currentScope = Scope.Sensor;
+            @Override
+            public void enterFuncdef(KoordParser.FuncdefContext ctx) {
+                String name = ctx.VARNAME().getText();
+                List<Type> paramTypes = new ArrayList<>();
+
+                for (var paramContext : ctx.param()) {
+                    Type type = typeFromTypeContext(paramContext.type());
+                    paramTypes.add(type);
+                    String paramName = paramContext.VARNAME().getText();
+                    var entry = new SymbolTableEntry(Scope.FunctionParam, type, paramName);
+                    vars.put(paramName, entry);
+
+                }
+                var returnType = typeFromTypeContext(ctx.type());
+                var functionType = Type.Function(paramTypes, returnType);
+                var entry = new SymbolTableEntry(Scope.Local, functionType, name);
+                vars.put(name, entry);
+
+
+
+            }
+
+            @Override
+            public void enterSensordecls(KoordParser.SensordeclsContext ctx) {
+                                                                           currentScope = Scope.Sensor;
                     }
             @Override
             public void enterDecblock(KoordParser.DecblockContext ctx) {
@@ -109,20 +150,7 @@ public class SymbolTable {
 
                 var ctx = declctx.type();
 
-                if (ctx.FLOAT() != null) {
-                    t = Type.Float;
-                } else if (ctx.INT() != null) {
-                    t = Type.Int;
-                } else if (ctx.BOOL() != null) {
-                    t = Type.Bool;
-                } else if (ctx.POS() != null) {
-                    t = Type.Pos;
-                }else if (ctx.STRINGTYPE() != null) {
-                    t = Type.String;
-
-                } else {
-                    System.err.println("Unable to determine type");
-                }
+                t = typeFromTypeContext(ctx);
 
                 if (declctx.arraydec() != null) {
                     t = Type.Array(t);
