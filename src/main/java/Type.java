@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Type system for Koord
@@ -31,7 +32,17 @@ class Type {
     }
 
     private Type innerType = null;
+
+    public Type getReturnType() {
+        return returnType;
+    }
+
     private Type returnType = null;
+
+    public List<Type> getArgumentType() {
+        return argumentType;
+    }
+
     private List<Type> argumentType = null;
     private final int code;
 
@@ -115,6 +126,16 @@ class Type {
                 return "[" + this.innerType.toString() + "]";
             case StringVal:
                 return "String";
+            case FunctionVal:
+                String str = "(";
+
+                str += argumentType
+                        .stream()
+                        .map((x) -> x.toString())
+                        .collect(Collectors.joining(", "));
+                str += ")";
+                str += " -> " + returnType.toString();
+                return str;
         }
         return "unknown";
     }

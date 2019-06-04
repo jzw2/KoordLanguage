@@ -116,6 +116,18 @@ public class SymbolTest {
 
     }
 
+    @Test
+    public void function() {
+
+        ParseTree p = Utils.treeFromFile("src/test/resources/badtype.koord");
+        var map = new SymbolTable(p);
+        var badTypes = map.getTypeMismatch()
+                .stream()
+                .map((x) -> x.getText())
+                .collect(Collectors.toList());
+        assert(badTypes.get(3).contains("func"));
+
+    }
 
 
 

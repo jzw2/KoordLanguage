@@ -274,8 +274,7 @@ public class SymbolTable {
                     }
 
                 } else if (ctx.funccall() != null) {
-                    //do nothing for now
-                    types.push(null);
+                    //should be taken care of in funccall
                 } else if (ctx.STRING() != null) {
                     types.push(Type.String);
                 } else if (ctx.LBRACE() != null) {
@@ -283,6 +282,34 @@ public class SymbolTable {
                 //if the size is 1, then the type should be the exact same
             }
 
+            @Override
+            public void exitFunccall(KoordParser.FunccallContext ctx) {
+
+                var func = vars.get(ctx.VARNAME().getText());
+                if (func == null) {
+
+                    //do nothing for now
+                    //assume it is an externally declared function
+                    var arglist = ctx.arglist();
+                    if (arglist != null) {
+
+                        for (var ignored : arglist.expr()) {
+                            types.pop();
+                        }
+                    }
+                    types.push(null);
+                } else {
+                    List<Type> argTypes = func.type.getArgumentType();
+
+                    for (int i = argTypes.size() - 1; i >= 0; i--) {
+                        if (!argTypes.get(i).equals(types.pop())) {
+                            typeMismatch.add(ctx);
+                            break;
+                        }
+                    }
+                    types.push(func.type.getReturnType());
+                }
+            }
             @Override
             public void exitBexpr(KoordParser.BexprContext ctx) {
                 if (ctx.VARNAME() == null) {

@@ -1,3 +1,6 @@
+def func(int i) -> int:
+  a = 12
+
 using Motion:
   actuators:
     int foo
@@ -23,3 +26,4 @@ dosomething:
     apple = banana
     cat = 1 + banana
     banana = 1 + 2
+    func(banana)
