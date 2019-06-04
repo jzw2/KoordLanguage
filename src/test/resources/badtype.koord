@@ -27,3 +27,4 @@ dosomething:
     cat = 1 + banana
     banana = 1 + 2
     func(banana)
+    b = func(cat)

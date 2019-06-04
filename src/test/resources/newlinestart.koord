@@ -1,0 +1,9 @@
+
+def myfunc(int i, int j) -> int:
+  d = 12
+
+
+dosomething:
+  pre:true
+  eff:
+    hello()

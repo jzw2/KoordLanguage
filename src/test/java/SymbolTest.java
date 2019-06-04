@@ -126,6 +126,7 @@ public class SymbolTest {
                 .map((x) -> x.getText())
                 .collect(Collectors.toList());
         assert(badTypes.get(3).contains("func"));
+        assert(badTypes.get(4).contains("b"));
 
     }
 

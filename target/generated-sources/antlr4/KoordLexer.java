@@ -131,14 +131,14 @@ public class KoordLexer extends Lexer {
 	  }
 	  @Override
 	  public Token nextToken() {
-	    if (_input.LA(1) == EOF) {
-	        if (!spaces.isEmpty()) {
+	    if (_input.LA(1) == EOF && !spaces.isEmpty()) {
+	        if (spaces.peek() != 0) {
 
-	        emit(commonToken(KoordParser.NEWLINE, "<newline>"));
-	      while (!spaces.isEmpty()) {
-	        spaces.poll();
-	        emit(commonToken(KoordParser.DEDENT, "dedent"));
-	      }
+	            emit(commonToken(KoordParser.NEWLINE, "<newline>"));
+	            while (spaces.peek() != 0) {
+	                spaces.poll();
+	                emit(commonToken(KoordParser.DEDENT, "dedent"));
+	            }
 	        }
 	    }
 	    Token next = super.nextToken();
@@ -181,15 +181,18 @@ public class KoordLexer extends Lexer {
 		switch (actionIndex) {
 		case 0:
 
+			      if (spaces.isEmpty()) {
+			        spaces.push(0);
+			      }
 			      Integer numSpaces = (int) getText().chars().filter(x -> x == ' ').count();
 			      if (_input.LA(1) != '\n')            {
 			        emit(commonToken(NEWLINE, "<newline>"));
 
-			        if (spaces.isEmpty() || numSpaces > spaces.peek()) {
+			        if (numSpaces > spaces.peek()) {
 			            emit(commonToken(KoordParser.INDENT, "<indent>"));
 			            spaces.push(numSpaces);
 			        } else if (spaces.peek() > numSpaces ) {
-			          while (!spaces.isEmpty() && spaces.peek() > numSpaces) {
+			          while (spaces.peek() > numSpaces) {
 
 			            emit(commonToken(KoordParser.DEDENT, "<dedent>"));
 			            spaces.pop();
