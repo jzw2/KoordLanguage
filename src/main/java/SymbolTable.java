@@ -104,8 +104,10 @@ public class SymbolTable {
                 }
             }
             @Override
-            public void enterDecl(KoordParser.DeclContext ctx) {
+            public void enterDecl(KoordParser.DeclContext declctx) {
                 Type t = null;
+
+                var ctx = declctx.type();
 
                 if (ctx.FLOAT() != null) {
                     t = Type.Float;
@@ -122,11 +124,11 @@ public class SymbolTable {
                     System.err.println("Unable to determine type");
                 }
 
-                if (ctx.arraydec() != null) {
+                if (declctx.arraydec() != null) {
                     t = Type.Array(t);
                 }
 
-                String name = ctx.VARNAME().getText();
+                String name = declctx.VARNAME().getText();
                 if (moduleName != null) {
                     name = moduleName + "." + name;
                 }

@@ -46,7 +46,7 @@ tokens { INDENT, DEDENT }
 
 
 
-
+ARROW: '->';
 AGENT: 'agent';
 MODULE:'module';
 USING : 'using';
@@ -167,9 +167,9 @@ top : lexemes+;
 
 program :  defs  module*   decblock*   init?  event+ EOF;
 defs : funcdef* /* adtdef* */;
-funcdef : DEF FUN VARNAME LPAR param* RPAR COLON NEWLINE statementblock;
+funcdef : DEF VARNAME LPAR (param (COMMA param)*)? RPAR ARROW  type COLON NEWLINE statementblock;
 //adtdef : DEF ADT VARNAME COLON decl+;
-param : TYPE VARNAME;
+param : type VARNAME;
 
 event : VARNAME COLON NEWLINE INDENT PRE COLON expr NEWLINE EFF COLON NEWLINE statementblock DEDENT;
 statementblock : INDENT stmt+ DEDENT;
@@ -216,13 +216,15 @@ aexpr :
 number : FNUM | INUM | PID;
 relop : LANGLE | RANGLE | GEQ | LEQ | EQ | NEQ; //more
 
+type : INT | BOOL | FLOAT | POS | QUEUE | STRINGTYPE;
+
 decblock : (ALLWRITE | ALLREAD | LOCAL) COLON NEWLINE INDENT decl+ DEDENT;
 
-decl : (INT | BOOL | FLOAT | POS | QUEUE | STRINGTYPE) /* there might be more */ VARNAME (arraydec)? (ASGN expr)? NEWLINE;
+decl : type /* there might be more */ VARNAME (arraydec)? (ASGN expr)? NEWLINE;
 
 arraydec : LBRACE RBRACE;
 
-module : USING MODULENAME COLON NEWLINE INDENT (actuatordecls sensordecls | sensordecls actuatordecls) DEDENT;
+module : USING MODULENAME COLON NEWLINE INDENT (actuatordecls | sensordecls)+ DEDENT;
 
 actuatordecls : ACTUATORS COLON NEWLINE INDENT decl+ DEDENT;
 
