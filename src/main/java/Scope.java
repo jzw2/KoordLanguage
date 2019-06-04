@@ -7,4 +7,5 @@ enum Scope {
     AllWrite,
     Actuator,
     Sensor,
+    FunctionParam,
 }
