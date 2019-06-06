@@ -15,12 +15,12 @@ class Type {
     private static final int StringVal = 6;
     private static final int FunctionVal = 7;
 
-    public static final Type Int = new Type(IntVal);
-    public static final Type Float = new Type(FloatVal);
     public static final Type Bool = new Type(BoolVal);
     public static final Type Queue = new Type(QueueVal);
-    public static final Type Pos = new Type(PosVal);
+    public static final Type Int = new Type(IntVal);
+    public static final Type Float = new Type(FloatVal);
     public static final Type String = new Type(StringVal);
+    public static final Type Pos = new Type(PosVal);
 
 
     /**
@@ -48,11 +48,12 @@ class Type {
 
     /**
      * Constructs an array type from the inner type
+     *
      * @param inner the inner type
      * @return the type wrapped in an arry
      */
     public static Type Array(Type inner) {
-        var ret =  new Type(ArrayVal);
+        var ret = new Type(ArrayVal);
         ret.innerType = inner;
         return ret;
 
@@ -70,10 +71,12 @@ class Type {
         this.code = code;
     }
 
+
     /**
      * Check if one type is equal to another type.
      * You should use this method instead of == because == will not work
      * with arrays.
+     *
      * @param other
      * @return
      */
@@ -98,6 +101,7 @@ class Type {
 
     /**
      * Whether the type is an array
+     *
      * @return whether teh type is an arary
      */
     public boolean isArray() {
@@ -109,6 +113,7 @@ class Type {
 
     /**
      * Create a human readable form of the type
+     *
      * @return string
      */
     @Override

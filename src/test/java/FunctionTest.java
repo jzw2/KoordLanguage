@@ -13,6 +13,7 @@ public class FunctionTest {
         assert(checker.testFile("src/test/resources/functions.koord"));
     }
 
+
     @Test
     public void checkTypes() {
         ParseTree tree = Utils.treeFromFile("src/test/resources/functions.koord");
