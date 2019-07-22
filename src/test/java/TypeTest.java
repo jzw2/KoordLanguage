@@ -1,6 +1,9 @@
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class TypeTest {
     @Test
@@ -22,4 +25,20 @@ public class TypeTest {
         assertEquals(Type.Array(Type.Array(Type.Bool)), (Type.Array(Type.Array(Type.Bool))));
         assertNotEquals(Type.Array(Type.Array(Type.Bool)), (Type.Array((Type.Bool))));
     }
+
+    @Test
+    void function() {
+        var type1 = Type.Function(Arrays.asList(Type.Int), Type.Int);
+        var type2 = Type.Function(Arrays.asList(Type.Int), Type.Int);
+        assert type1.equals(type2);
+
+
+        type1 = Type.Function(Arrays.asList(Type.Int, Type.Int), Type.Int);
+        assert !type1.equals(type2);
+
+
+        type2 = Type.Function(Arrays.asList(), Type.Int);
+        assert !type1.equals(type2);
+    }
+
 }

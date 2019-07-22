@@ -147,7 +147,6 @@ public class SymbolTest {
 
         ParseTree p = Utils.treeFromFile("src/test/resources/badlog.koord");
         var map = new SymbolTable(p);
-        var assignToStream = map.getAssignToStream();
         var badTypes = map.getTypeMismatch()
                 .stream()
                 .map((x) -> x.getText())
@@ -155,4 +154,6 @@ public class SymbolTest {
         assertTrue(badTypes.get(2).contains("i"));
 
     }
+
+
 }

@@ -38,4 +38,5 @@ public enum Scope {
      * Read to get value.
      */
     Sensor,
+    FunctionParam,
 }

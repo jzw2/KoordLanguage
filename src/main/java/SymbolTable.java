@@ -250,7 +250,42 @@ public class SymbolTable {
     }
 
     private class SymbolTableBuilderListener extends KoordBaseListener {
+        private Type typeFromContext(KoordParser.TypeContext context) {
 
+            var ctx = context.primitive();
+            Type t = null;
+
+            if (ctx != null) {
+                if (ctx.FLOAT() != null) {
+                    t = Type.Float;
+                } else if (ctx.INT() != null) {
+                    t = Type.Int;
+                } else if (ctx.BOOL() != null) {
+                    t = Type.Bool;
+                } else if (ctx.POS() != null) {
+                    t = Type.Pos;
+                } else if (ctx.STRINGTYPE() != null) {
+                    t = Type.String;
+
+                } else if (ctx.STREAM() != null) {
+                    t = Type.Stream;
+                } else {
+                    System.err.println("Unable to determine type");
+                }
+            } else {
+                //has to be a custom type then
+                var typeName = context.CID().getText();
+                t = Type.getCustomTypes().get(typeName);
+
+            }
+
+            for (var dec : context.arraydec()) {
+                t = Type.Array(t);
+            }
+
+            return t;
+
+        }
 
         private Scope currentScope;
         private String moduleName;
@@ -305,36 +340,8 @@ public class SymbolTable {
 
         @Override
         public void enterDecl(KoordParser.DeclContext declContext) {
-            var ctx = declContext.primitive();
-            Type t = null;
 
-            if (ctx != null) {
-                if (ctx.FLOAT() != null) {
-                    t = Type.Float;
-                } else if (ctx.INT() != null) {
-                    t = Type.Int;
-                } else if (ctx.BOOL() != null) {
-                    t = Type.Bool;
-                } else if (ctx.POS() != null) {
-                    t = Type.Pos;
-                } else if (ctx.STRINGTYPE() != null) {
-                    t = Type.String;
-
-                } else if (ctx.STREAM() != null) {
-                    t = Type.Stream;
-                } else {
-                    System.err.println("Unable to determine type");
-                }
-            } else {
-                //has to be a custom type then
-                var typeName = declContext.CID().getText();
-                t = Type.getCustomTypes().get(typeName);
-
-            }
-
-            for (var dec : declContext.arraydec()) {
-                t = Type.Array(t);
-            }
+            var t = typeFromContext(declContext.type());
 
             String name = declContext.LID().getText();
 
@@ -354,6 +361,27 @@ public class SymbolTable {
                 fields.put(name, t);
             }
         }
+
+        @Override
+        public void enterFuncdef(KoordParser.FuncdefContext ctx) {
+            String name = ctx.LID().getText();
+            List<Type> paramTypes = new ArrayList<>();
+
+            for (var paramContext : ctx.param()) {
+                Type type = typeFromContext(paramContext.type());
+                paramTypes.add(type);
+                String paramName = paramContext.LID().getText();
+                var entry = new SymbolTableEntry(Scope.FunctionParam, type, paramName);
+                vars.put(paramName, entry);
+
+            }
+            var returnType = typeFromContext(ctx.type());
+            var functionType = Type.Function(paramTypes, returnType);
+            var entry = new SymbolTableEntry(Scope.Local, functionType, name);
+            vars.put(name, entry);
+
+        }
+
 
     }
 
@@ -516,6 +544,36 @@ public class SymbolTable {
                 typeMismatch.add(ctx);
             }
         }
+
+        @Override
+        public void exitFunccall(KoordParser.FunccallContext ctx) {
+
+            var func = vars.get(ctx.LID().getText());
+            if (func == null) {
+
+                //do nothing for now
+                //assume it is an externally declared function
+                var arglist = ctx.arglist();
+                if (arglist != null) {
+
+                    for (var ignored : arglist.expr()) {
+                        types.pop();
+                    }
+                }
+                types.push(null);
+            } else {
+                List<Type> argTypes = func.type.getArgumentType();
+
+                for (int i = argTypes.size() - 1; i >= 0; i--) {
+                    if (!argTypes.get(i).equals(types.pop())) {
+                        typeMismatch.add(ctx);
+                        break;
+                    }
+                }
+                types.push(func.type.getReturnType());
+            }
+        }
+
 
     }
 }

@@ -46,13 +46,12 @@ tokens { INDENT, DEDENT }
 
 
 
-
+ARROW: '->';
 AGENT: 'agent';
 MODULE:'module';
 USING : 'using';
 
 DEF: 'def';
-TYPE: 'type';
 FUN: 'fun';
 ADT : 'adt';
 FOR : 'for';
@@ -164,9 +163,9 @@ fragment WS : [ \t]+ ; //should be parsed ?
 
 program :  NEWLINE? defs  module*   (allreadvars | allwritevars | localvars)*   init?  event+ EOF;
 defs : funcdef*  adtdef*;
-funcdef : DEF FUN LID LPAR param* RPAR COLON NEWLINE statementblock;
+funcdef : DEF LID LPAR (param (COMMA param)*)? RPAR ARROW  type COLON NEWLINE statementblock;
 adtdef : DEF CID COLON NEWLINE INDENT decl+ DEDENT;
-param : TYPE LID;
+param : type LID;
 
 
 event : LID COLON NEWLINE INDENT PRE COLON expr NEWLINE EFF COLON NEWLINE statementblock DEDENT;
@@ -244,13 +243,15 @@ allreadvars : ALLREAD COLON NEWLINE INDENT decl+ DEDENT;
 localvars : LOCAL COLON NEWLINE INDENT decl+ DEDENT;
 
 
-decl :  (primitive | CID) (arraydec)* LID  (ASGN expr)? NEWLINE;
+decl :   type LID  (ASGN expr)? NEWLINE;
+
+type : (primitive | CID) (arraydec)*;
 
 primitive : INT | BOOL | FLOAT | POS | QUEUE | STRINGTYPE | STREAM;
 
 arraydec : LBRACE RBRACE;
 
-module : USING CID COLON NEWLINE INDENT (actuatordecls sensordecls | sensordecls actuatordecls) DEDENT;
+module : USING CID COLON NEWLINE INDENT (actuatordecls | sensordecls)+ DEDENT;
 
 actuatordecls : ACTUATORS COLON NEWLINE INDENT decl+ DEDENT;
 
