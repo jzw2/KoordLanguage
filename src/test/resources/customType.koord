@@ -1,0 +1,16 @@
+def Foo:
+    int a
+
+def Bar:
+    Foo[] a
+
+local:
+    Bar bar
+    Foo foo
+
+myevent:
+    pre: true
+    eff:
+        bar.a[0].a = 5
+        foo = bar.a[1]
+

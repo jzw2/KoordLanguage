@@ -99,6 +99,11 @@ public class CodeGenTest {
     }
 
     @Test
+    void syntaxCustomType() {
+        verifySyntax("src/test/resources/customType.koord", "GeneratedPython/customType.py");
+    }
+
+    @Test
     void mockLineForm() {
         mockSharedVariables("src/test/resources/lineform.koord", "MockGvh/lineform.py", "MockGvh/lineformtest.py");
     }
