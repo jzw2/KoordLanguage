@@ -188,6 +188,18 @@ public class CodeGen {
         }
     }
 
+    private void generateForLoop(KoordParser.ForloopContext ctx) {
+        builder.append("for self.locals['")
+                .append(ctx.LID());
+        builder.append("'] in ")
+                .append("range(");
+        generateExpression(ctx.expr(0));
+        builder.append(", ");
+        generateExpression(ctx.expr(1));
+        builder.append("):\n");
+        generateStatementBlock(ctx.statementblock());
+    }
+
 
     private void generateStatement(KoordParser.StmtContext ctx) {
         builder.append(indent());
@@ -256,6 +268,13 @@ public class CodeGen {
             builder.append(indent())
                     .append("self.unlock()\n");
             return;
+        } else if (ctx.forloop() != null) {
+            generateForLoop(ctx.forloop());
+
+        } else if (ctx.funccall() != null) {
+            generateFuncCall(ctx.funccall());
+        } else {
+            System.err.println("error generating statement");
         }
         newline();
 

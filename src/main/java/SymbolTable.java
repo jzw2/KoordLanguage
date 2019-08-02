@@ -115,12 +115,13 @@ public class SymbolTable {
 
                 if (entry == null) {
                     System.err.println("could not find variable");
+                    return;
                 }
 
                 if (entry.scope == Scope.Sensor) {
                     assignToSensor.add(entry.name);
                 }
-                if (entry.type.equals(Type.Stream)) {
+                if (entry.type != null && entry.type.equals(Type.Stream)) {
                     assignToStream.add(entry.name);
                 }
                 if (entry.scope.equals(Scope.AllRead)) {
@@ -399,6 +400,10 @@ public class SymbolTable {
             if (ctx.LID() != null && ctx.lval() != null) {
                 var fieldName = ctx.LID().getText();
                 var type = types.pop();
+                if (type == null) {
+                    //return from function
+                    return;
+                }
                 if (type.getCustomType() == null) {
                     System.err.println("Cannot access field on primitive");
                 } else {

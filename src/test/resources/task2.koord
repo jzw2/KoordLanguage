@@ -1,0 +1,47 @@
+
+
+using Motion:
+    actuators:
+        pos[] path
+    sensors:
+        pos currentPosition
+        boolean reached
+
+
+local:
+    boolean isOnTask
+    Task myTask
+    pos[] testRoute
+    int i
+
+allread:
+    pos[] route
+
+allwrite:
+    Task[] tasks
+
+event1:
+    pre: !isOnTask
+    eff:
+        if allAssigned(tasks):
+            stop
+        else:
+            atomic:
+                for i = 0, length(tasks):
+                    if !tasks[i].assigned:
+                        myTask = tasks[i]
+                        testRoute = findPath(Motion.currentPosition, myTask)
+
+                        if pathIsClear(route, numAgents, testRoute, pid):
+                            isOnTask = true
+                            assign(myTask, pid)
+                            tasks[i] = myTask
+                            Motion.path = testRoute
+                        else:
+                            isOnTask = false
+
+event2:
+    pre: isOnTask && Motion.reached
+    eff:
+         isOnTask = false
+

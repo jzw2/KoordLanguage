@@ -104,6 +104,11 @@ public class CodeGenTest {
     }
 
     @Test
+    void syntaxTask2() {
+        verifySyntax("src/test/resources/task2.koord", "GeneratedPython/task2.py");
+    }
+
+    @Test
     void mockLineForm() {
         mockSharedVariables("src/test/resources/lineform.koord", "MockGvh/lineform.py", "MockGvh/lineformtest.py");
     }
