@@ -25,4 +25,4 @@ finalsum:
   eff :
       finalsum = sum
       stdout << finalsum
-
+      stop
